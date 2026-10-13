@@ -248,6 +248,41 @@ button {
 }
 
 
+/* ==========================================
+   ESTILOS MENÚ HAMBURGUESA MÓVIL
+========================================== */
+.menu-hamburguesa {
+    display: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 28px;
+    height: 20px;
+    z-index: 1001;
+    padding: 0;
+}
+
+.menu-hamburguesa span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: #fff;
+    transition: all 0.3s ease;
+}
+
+.menu-hamburguesa.activo span:nth-child(1) {
+    transform: translateY(9px) rotate(45deg);
+}
+.menu-hamburguesa.activo span:nth-child(2) {
+    opacity: 0;
+}
+.menu-hamburguesa.activo span:nth-child(3) {
+    transform: translateY(-9px) rotate(-45deg);
+}
+
+
 
 /* ==========================================
    WHATSAPP MODERNO
@@ -1551,7 +1586,7 @@ button {
 
 
 /* ==============================
-   TABLET Y MÓVIL (CORREGIDO PARA EVITAR DESBORDES)
+   TABLET Y MÓVIL (CORREGIDO CON MENÚ HAMBURGUESA)
 ============================== */
 
 @media (max-width: 1100px) {
@@ -1572,9 +1607,39 @@ button {
     .nav-container { padding: 0 10px !important; }
     .brand { width: 75px; height: 75px; }
     .brand img { width: 70px; height: 70px; }
-    .nav-menu { display: none; }
     
-    /* Ajuste clave para el botón de WhatsApp móvil sin que se corte */
+    /* Mostrar botón hamburguesa y desplegable en móvil */
+    .menu-hamburguesa {
+        display: flex;
+    }
+
+    .nav-menu {
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: 70px;
+        left: -100%;
+        width: 100%;
+        height: calc(100vh - 70px);
+        background: rgba(5, 5, 5, 0.98);
+        justify-content: center;
+        align-items: center;
+        gap: 25px;
+        transition: left 0.4s ease;
+        z-index: 999;
+        margin-left: 0;
+    }
+
+    .nav-menu.activo {
+        left: 0;
+    }
+
+    .nav-menu a {
+        font-size: 15px;
+        letter-spacing: 2px;
+    }
+
+    /* Ajuste para el botón de WhatsApp móvil sin que se corte */
     .whatsapp-modern {
         padding: 6px 10px;
         font-size: 7px;
