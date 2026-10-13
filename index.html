@@ -207,6 +207,26 @@
             .then(res => res.text())
             .then(data => document.getElementById('footer-placeholder').innerHTML = data);
     </script>
+<script>
+    // Delegación de eventos para asegurar que funcione incluso si el header se carga dinámicamente
+    document.addEventListener('click', (e) => {
+        const btnToggle = e.target.closest('#btnMenuToggle') || e.target.closest('.menu-hamburguesa');
+        const navMenu = document.querySelector('.nav-menu');
 
+        // Si tocó el botón hamburguesa
+        if (btnToggle && navMenu) {
+            btnToggle.classList.toggle('activo');
+            navMenu.classList.toggle('activo');
+            return;
+        }
+
+        // Si tocó un enlace dentro del menú, cerrar el menú
+        if (e.target.closest('.nav-menu a') && navMenu) {
+            const btn = document.querySelector('.menu-hamburguesa') || document.getElementById('btnMenuToggle');
+            if (btn) btn.classList.remove('activo');
+            navMenu.classList.remove('activo');
+        }
+    });
+</script>
 </body>
 </html>
