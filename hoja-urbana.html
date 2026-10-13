@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COLECCIÓN URBANA | TRIBE OF JUDAH</title>
+<!-- ICONO DEL LEÓN EN LA PESTAÑA -->
+    <link rel="icon" type="image/png" href="leon.png">    
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- ESTILOS EXTRAS PARA LOS BOTONES DE FILTRO -->
+    <style>
+        .filtros-categorias {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+        .btn-filtro {
+            background: #111;
+            color: #fff;
+            border: 1px solid #333;
+            padding: 10px 18px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: 0.3s;
+            border-radius: 4px;
+        }
+        .btn-filtro:hover, .btn-filtro.activo {
+            background: #d4a62a;
+            color: #000;
+            border-color: #d4a62a;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- MENÚ CARGADO AUTOMÁTICAMENTE -->
+    <div id="header-placeholder"></div>
+
+    <!-- GALERÍA -->
+    <main style="padding-top: 120px;">
+
+        <section class="galeria-seccion container">
+            <div class="galeria-header">
+                <div>
+                    <p class="section-label">TRIBE OF JUDAH</p>
+                    <h1 class="titulo-galeria">COLECCIÓN <span>URBANA</span></h1>
+                </div>
+                <div class="galeria-contador">
+                    <span id="contador-productos">0 Productos disponibles</span>
+                </div>
+            </div>
+
+            <!-- BOTONES DE FILTRO POR CATEGORÍA -->
+            <div class="filtros-categorias">
+                <button class="btn-filtro activo" onclick="filtrarProductos('todos', this)">TODOS</button>
+                <button class="btn-filtro" onclick="filtrarProductos('camisetas', this)">CAMISETAS</button>
+                <button class="btn-filtro" onclick="filtrarProductos('buzos', this)">BUZOS</button>
+                <button class="btn-filtro" onclick="filtrarProductos('sacos', this)">SACOS CON CAPOTA</button>
+            </div>
+
+            <!-- REJILLA DE PRODUCTOS (SE CARGAN VÍA JAVASCRIPT) -->
+            <div class="grid-productos" id="contenedor-urbana"></div>
+
+        </section>
+
+        <!-- CONTACTO -->
+        <section id="contacto" class="contact">
+            <div class="container contact-content">
+                <p class="section-label">CONTACTO</p>
+                <h2>¿TIENES UNA<br><span>IDEA?</span></h2>
+                <p>Escríbenos y hagamos realidad tu próximo diseño.</p>
+                <a href="https://wa.me/573226158846" target="_blank" class="btn btn-white">HABLAR CON NOSOTROS</a>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER CARGADO AUTOMÁTICAMENTE -->
+    <div id="footer-placeholder"></div>
+
+    <!-- SCRIPT DE CARGA, FILTROS Y PRODUCTOS -->
+    <script>
+        // Cargar Header y Footer dinámicos
+        fetch('header.html')
+            .then(res => res.text())
+            .then(data => document.getElementById('header-placeholder').innerHTML = data);
+
+        fetch('footer.html')
+            .then(res => res.text())
+            .then(data => document.getElementById('footer-placeholder').innerHTML = data);
+
+        // 1. PALETAS DE COLORES
+        const coloresAlgodonBasico = `
+            <span class="dot-color" style="background-color: #C5B49E;" data-nombre="Nude"></span>
+            <span class="dot-color" style="background-color: #D2BEA6;" data-nombre="Kaki Arena"></span>
+            <span class="dot-color" style="background-color: #EFE6D5;" data-nombre="Vainilla"></span>
+            <span class="dot-color" style="background-color: #FFFFFF;" data-nombre="Blanco"></span>
+            <span class="dot-color" style="background-color: #D0CFD4;" data-nombre="Jaspe Claro"></span>
+            <span class="dot-color" style="background-color: #A8A9AD;" data-nombre="Gris Jaspe"></span>
+            <span class="dot-color" style="background-color: #8E8F94;" data-nombre="Gris Plata"></span>
+            <span class="dot-color" style="background-color: #4A4B4D;" data-nombre="Gris Oscuro"></span>
+            <span class="dot-color" style="background-color: #323335;" data-nombre="Negro Cross"></span>
+            <span class="dot-color" style="background-color: #000000;" data-nombre="Negro"></span>
+            <span class="dot-color" style="background-color: #B2C9D2;" data-nombre="Agua"></span>
+            <span class="dot-color" style="background-color: #6B9EB8;" data-nombre="Azul Medio"></span>
+            <span class="dot-color" style="background-color: #008DA5;" data-nombre="Turquesa"></span>
+            <span class="dot-color" style="background-color: #5C7CA3;" data-nombre="Celeste Jaspe"></span>
+            <span class="dot-color" style="background-color: #334363;" data-nombre="Azul Jaspe"></span>
+            <span class="dot-color" style="background-color: #1C2B5B;" data-nombre="Cobalto"></span>
+            <span class="dot-color" style="background-color: #111638;" data-nombre="Azul Navy"></span>
+            <span class="dot-color" style="background-color: #0E12A3;" data-nombre="Azul Rey"></span>
+            <span class="dot-color" style="background-color: #005870;" data-nombre="Petróleo"></span>
+            <span class="dot-color" style="background-color: #008080;" data-nombre="Verde Esmeralda"></span>
+            <span class="dot-color" style="background-color: #DC9018;" data-nombre="Mostaza"></span>
+            <span class="dot-color" style="background-color: #E3BA27;" data-nombre="Amarillo"></span>
+            <span class="dot-color" style="background-color: #E8D168;" data-nombre="Amarillo Claro"></span>
+            <span class="dot-color" style="background-color: #D2E635;" data-nombre="Amarillo Neón"></span>
+            <span class="dot-color" style="background-color: #B3CC85;" data-nombre="Verde Pistacho"></span>
+            <span class="dot-color" style="background-color: #8CA58A;" data-nombre="Verde Invierno"></span>
+            <span class="dot-color" style="background-color: #93B847;" data-nombre="Kiwi"></span>
+            <span class="dot-color" style="background-color: #009E49;" data-nombre="Verde Cali"></span>
+            <span class="dot-color" style="background-color: #3D432D;" data-nombre="Verde Militar"></span>
+            <span class="dot-color" style="background-color: #0D402B;" data-nombre="Verde Botella"></span>
+            <span class="dot-color" style="background-color: #F7DEC0;" data-nombre="Crema"></span>
+            <span class="dot-color" style="background-color: #C48F58;" data-nombre="Avellana"></span>
+            <span class="dot-color" style="background-color: #8C6D58;" data-nombre="Mocca"></span>
+            <span class="dot-color" style="background-color: #803E2D;" data-nombre="Caoba"></span>
+            <span class="dot-color" style="background-color: #A0552B;" data-nombre="Camel"></span>
+            <span class="dot-color" style="background-color: #522115;" data-nombre="Café"></span>
+            <span class="dot-color" style="background-color: #68131B;" data-nombre="Vinotinto"></span>
+            <span class="dot-color" style="background-color: #C81D11;" data-nombre="Rojo"></span>
+            <span class="dot-color" style="background-color: #F36F13;" data-nombre="Naranja"></span>
+            <span class="dot-color" style="background-color: #FF5F1F;" data-nombre="Naranja Neón"></span>
+            <span class="dot-color" style="background-color: #A890B8;" data-nombre="Lila"></span>
+            <span class="dot-color" style="background-color: #601458;" data-nombre="Púrpura"></span>
+            <span class="dot-color" style="background-color: #430E59;" data-nombre="Morado"></span>
+            <span class="dot-color" style="background-color: #D81B60;" data-nombre="Fucsia"></span>
+            <span class="dot-color" style="background-color: #C2A3C7;" data-nombre="Violeta Pastel"></span>
+            <span class="dot-color" style="background-color: #E28CA5;" data-nombre="Rosa Amaranta"></span>
+            <span class="dot-color" style="background-color: #F3B2C6;" data-nombre="Rosa"></span>
+            <span class="dot-color" style="background-color: #F6C1CB;" data-nombre="Rosa Pastel"></span>
+            <span class="dot-color" style="background-color: #FF598F;" data-nombre="Rosa Neón"></span>`;
+
+        const coloresTelaFriaBasica = `
+            <span class="dot-color" style="background-color: #FFB366;" data-nombre="Mandarina"></span>
+            <span class="dot-color" style="background-color: #C68B59;" data-nombre="Camel"></span>
+            <span class="dot-color" style="background-color: #B58A63;" data-nombre="Caqui"></span>
+            <span class="dot-color" style="background-color: #FFF275;" data-nombre="Amarillo Claro"></span>
+            <span class="dot-color" style="background-color: #89CFF0;" data-nombre="Azul Bebé"></span>
+            <span class="dot-color" style="background-color: #1A365D;" data-nombre="Azul Oscuro"></span>
+            <span class="dot-color" style="background-color: #00BCD4;" data-nombre="Azul Turquesa"></span>
+            <span class="dot-color" style="background-color: #FFFFFF;" data-nombre="Blanca"></span>
+            <span class="dot-color" style="background-color: #D3D3D3;" data-nombre="Gris Hasped"></span>
+            <span class="dot-color" style="background-color: #FF8DA1;" data-nombre="Guayaba"></span>
+            <span class="dot-color" style="background-color: #000000;" data-nombre="Negra"></span>
+            <span class="dot-color" style="background-color: #FFB6C1;" data-nombre="Palo Rosa"></span>
+            <span class="dot-color" style="background-color: #FF0000;" data-nombre="Rojo"></span>
+            <span class="dot-color" style="background-color: #0A5C36;" data-nombre="Verde Botella"></span>
+            <span class="dot-color" style="background-color: #A8E6CF;" data-nombre="Verde Menta"></span>
+            <span class="dot-color" style="background-color: #4A5D4E;" data-nombre="Verde Militar"></span>
+            <span class="dot-color" style="background-color: #7B8B6F;" data-nombre="Verde Oliva"></span>`;
+
+        const coloresAlgodonSuperior = `
+            <span class="dot-color" style="background-color: #E3D9C6;" data-nombre="Arena"></span>
+            <span class="dot-color" style="background-color: #89CFF0;" data-nombre="Azul Bebé"></span>
+            <span class="dot-color" style="background-color: #6B93D6;" data-nombre="Azul Persian"></span>
+            <span class="dot-color" style="background-color: #F5F5DC;" data-nombre="Beige"></span>
+            <span class="dot-color" style="background-color: #FFFFFF;" data-nombre="Blanco"></span>
+            <span class="dot-color" style="background-color: #5C4033;" data-nombre="Café"></span>
+            <span class="dot-color" style="background-color: #FFB6C1;" data-nombre="Palo de Rosa"></span>
+            <span class="dot-color" style="background-color: #4A5D4E;" data-nombre="Verde Militar"></span>
+            <span class="dot-color" style="background-color: #C5C9B8;" data-nombre="Verde Seco"></span>
+            <span class="dot-color" style="background-color: #000000;" data-nombre="Negro"></span>`;
+
+        const coloresTelaFriaPremium = `
+            <span class="dot-color" style="background-color: #FF0000;" data-nombre="Rojo"></span>
+            <span class="dot-color" style="background-color: #E6C2C2;" data-nombre="Rosa Viejo"></span>
+            <span class="dot-color" style="background-color: #C5C9B8;" data-nombre="Verde Seco"></span>
+            <span class="dot-color" style="background-color: #FFFFFF;" data-nombre="Blanco"></span>
+            <span class="dot-color" style="background-color: #000000;" data-nombre="Negro"></span>
+            <span class="dot-color" style="background-color: #B58A63;" data-nombre="Caqui"></span>
+            <span class="dot-color" style="background-color: #4A5D4E;" data-nombre="Verde Militar"></span>
+            <span class="dot-color" style="background-color: #1A365D;" data-nombre="Azul Oscuro"></span>
+            <span class="dot-color" style="background-color: #008080;" data-nombre="Azul Petróleo"></span>
+            <span class="dot-color" style="background-color: #D3D3D3;" data-nombre="Gris Cemento"></span>
+            <span class="dot-color" style="background-color: #F5F5DC;" data-nombre="Beige"></span>`;
+
+        const coloresAlgodonPremium = `
+            <span class="dot-color" style="background-color: #000000;" data-nombre="Negro"></span>
+            <span class="dot-color" style="background-color: #FFFFFF;" data-nombre="Blanco"></span>
+            <span class="dot-color" style="background-color: #FFF8DC;" data-nombre="Vainilla"></span>`;
+
+        const coloresBuzos = `
+            <span class="dot-color" style="background-color: #3D432D;" data-nombre="Verde Militar"></span>
+            <span class="dot-color" style="background-color: #000000;" data-nombre="Negro"></span>
+            <span class="dot-color" style="background-color: #FFF8DC;" data-nombre="Vainilla"></span>
+            <span class="dot-color" style="background-color: #D2BEA6;" data-nombre="Nude/Kaki"></span>
+            <span class="dot-color" style="background-color: #000080;" data-nombre="Azul Navy"></span>
+            <span class="dot-color" style="background-color: #89CFF0;" data-nombre="Celeste"></span>
+            <span class="dot-color" style="background-color: #FFFFFF;" data-nombre="Blanco"></span>
+            <span class="dot-color" style="background-color: #7B8B6F;" data-nombre="Verde Oliva"></span>
+            <span class="dot-color" style="background-color: #0E12A3;" data-nombre="Azul Rey"></span>
+            <span class="dot-color" style="background-color: #FFB6C1;" data-nombre="Rosa"></span>`;
+
+        const coloresSacos = `
+            <span class="dot-color" style="background-color: #000000;" data-nombre="Negro"></span>
+            <span class="dot-color" style="background-color: #000080;" data-nombre="Azul Navy"></span>
+            <span class="dot-color" style="background-color: #7B8B6F;" data-nombre="Verde Oliva"></span>
+            <span class="dot-color" style="background-color: #FF0000;" data-nombre="Rojo"></span>
+            <span class="dot-color" style="background-color: #BA55D3;" data-nombre="Lila"></span>
+            <span class="dot-color" style="background-color: #89CFF0;" data-nombre="Celeste"></span>
+            <span class="dot-color" style="background-color: #FFFFFF;" data-nombre="Blanco"></span>
+            <span class="dot-color" style="background-color: #E6C2C2;" data-nombre="Beige"></span>
+            <span class="dot-color" style="background-color: #FFF8DC;" data-nombre="Vainilla"></span>
+            <span class="dot-color" style="background-color: #0E12A3;" data-nombre="Azul Rey"></span>
+            <span class="dot-color" style="background-color: #4A4B4D;" data-nombre="Gris Oscuro"></span>`;
+
+        // Tallas específicas por gama
+        const tallasXS_XL = `<span>XS</span><span>S</span><span>M</span><span>L</span><span>XL</span>`;
+        const tallasS_XL = `<span>S</span><span>M</span><span>L</span><span>XL</span>`;
+        const tallasS_2XL = `<span>S</span><span>M</span><span>L</span><span>XL</span><span>XXL</span>`;
+
+        // LISTA DE PRODUCTOS
+        const productosUrbana = [
+         
+              {
+                titulo: "CAMISETA TELA FRÍA PREMIUM",
+                precio: "$90.000 COP",
+                imagen: "urbano/urbana19.jpeg",
+                badge: "EXCLUSIVO",
+                material: "260 Gramos 5% Poliéster 90% Algodón 5% expandex",
+                gama: "Tela Fría Premium",
+                categoria: "camisetas",
+                colores: coloresTelaFriaPremium,
+                tallas: tallasS_2XL
+            },
+            {
+                titulo: "CAMISETA TELA FRÍA PREMIUM",
+                precio: "$90.000 COP",
+                imagen: "urbano/urbana20.jpeg",
+                badge: "EXCLUSIVO",
+                material: "260 Gramos 5% Poliéster 90% Algodón 5% expandex",
+                gama: "Tela Fría Premium",
+                categoria: "camisetas",
+                colores: coloresTelaFriaPremium,
+                tallas: tallasS_2XL
+            },
+             {
+                titulo: "CAMISETA TELA FRÍA PREMIUM",
+                precio: "$90.000 COP",
+                imagen: "urbano/urbana22.jpeg",
+                badge: "EXCLUSIVO",
+                material: "260 Gramos 5% Poliéster 90% Algodón 5% expandex",
+                gama: "Tela Fría Premium",
+                categoria: "camisetas",
+                colores: coloresTelaFriaPremium,
+                tallas: tallasS_2XL
+            },
+               {
+                titulo: "CAMISETA TELA FRÍA PREMIUM",
+                precio: "$90.000 COP",
+                imagen: "urbano/urbana23.jpeg",
+                badge: "EXCLUSIVO",
+                material: "260 Gramos 5% Poliéster 90% Algodón 5% expandex",
+                gama: "Tela Fría Premium",
+                categoria: "camisetas",
+                colores: coloresTelaFriaPremium,
+                tallas: tallasS_2XL
+            },
+             {
+                titulo: "CAMISETA TELA FRÍA PREMIUM",
+                precio: "$90.000 COP",
+                imagen: "urbano/urbana24.jpeg",
+                badge: "EXCLUSIVO",
+                material: "260 Gramos 5% Poliéster 90% Algodón 5% expandex",
+                gama: "Tela Fría Premium",
+                categoria: "camisetas",
+                colores: coloresTelaFriaPremium,
+                tallas: tallasS_2XL
+            },
+               {
+                titulo: "CAMISETA TELA FRÍA PREMIUM",
+                precio: "$90.000 COP",
+                imagen: "urbano/urbana25.jpeg",
+                badge: "EXCLUSIVO",
+                material: "260 Gramos 5% Poliéster 90% Algodón 5% expandex",
+                gama: "Tela Fría Premium",
+                categoria: "camisetas",
+                colores: coloresTelaFriaPremium,
+                tallas: tallasS_2XL
+            },
+            {
+                titulo: "BASICA ALGODÓN",
+                precio: "$45.000 COP",
+                imagen: "urbano/urbana17.jpeg",
+                badge: "NUEVO",
+                material: "Algodón 160 gramos",
+                gama: "Algodón Básico",
+                categoria: "camisetas",
+                colores: coloresAlgodonBasico,
+                tallas: tallasXS_XL
+            },
+           
+            {
+                titulo: "CAMISETA TELA FRÍA BÁSICA",
+                precio: "$50.000 COP",
+                imagen: "urbano/urbana21.jpeg",
+                badge: "DISPONIBLE",
+                material: "Tela Fría",
+                gama: "Tela Fría Básica",
+                categoria: "camisetas",
+                colores: coloresTelaFriaBasica,
+                tallas: tallasXS_XL
+            },
+            {
+                titulo: "CAMISETA ALGODÓN SUPERIOR",
+                precio: "$75.000 COP",
+                imagen: "urbano/urbana15.jpeg",
+                badge: "DESTACADO",
+                material: "Algodón 230 gramos 100% Algodón",
+                gama: "Algodón Superior",
+                categoria: "camisetas",
+                colores: coloresAlgodonSuperior,
+                tallas: tallasS_XL
+            },
+             {
+                titulo: "CAMISETA ALGODÓN SUPERIOR",
+                precio: "$75.000 COP",
+                imagen: "urbano/urbana16.jpeg",
+                badge: "DESTACADO",
+                material: "Algodón 230 gramos 100% Algodón",
+                gama: "Algodón Superior",
+                categoria: "camisetas",
+                colores: coloresAlgodonSuperior,
+                tallas: tallasS_XL
+            },
+             {
+                titulo: "CAMISETA ALGODÓN SUPERIOR",
+                precio: "$75.000 COP",
+                imagen: "urbano/urbana18.jpeg",
+                badge: "DESTACADO",
+                material: "Algodón 230 gramos 100% Algodón",
+                gama: "Algodón Superior",
+                categoria: "camisetas",
+                colores: coloresAlgodonSuperior,
+                tallas: tallasS_XL
+            },
+         
+               {
+                titulo: "CAMISETA ALGODÓN PREMIUM",
+                precio: "$90.000 COP",
+                imagen: "urbano/urbana1.jpeg",
+                badge: "EXCLUSIVO",
+                material: "260 Gramos 11% Poliéster 85% Algodón 4% expandex",
+                gama: "Algodón Premium",
+                categoria: "camisetas",
+                colores: coloresAlgodonPremium,
+                tallas: tallasS_XL
+            },   {
+                titulo: "CAMISETA ALGODÓN PREMIUM",
+                precio: "$90.000 COP",
+                imagen: "urbano/urbana3.jpeg",
+                badge: "DISPONIBLE",
+                   material: "260 Gramos 11% Poliéster 85% Algodón 4% expandex",
+                gama: "Algodón Premium",
+                categoria: "camisetas",
+                colores: coloresAlgodonPremium,
+                tallas: tallasS_XL
+            },   {
+                titulo: "CAMISETA ALGODÓN PREMIUM",
+                precio: "$90.000 COP",
+                imagen: "urbano/urbana4.jpeg",
+                badge: "MAS VENDIDOS",
+                material: "260 Gramos 11% Poliéster 85% Algodón 4% expandex",
+                gama: "Algodón Premium",
+                categoria: "camisetas",
+                colores: coloresAlgodonPremium,
+                tallas: tallasS_XL
+            },   {
+                titulo: "CAMISETA ALGODÓN PREMIUM",
+                precio: "$90.000 COP",
+                imagen: "urbano/urbana5.jpeg",
+                badge: "EXCLUSIVO",
+                    material: "260 Gramos 11% Poliéster 85% Algodón 4% expandex",
+                gama: "Algodón Premium",
+                categoria: "camisetas",
+                colores: coloresAlgodonPremium,
+                tallas: tallasS_XL
+            },
+             {
+                titulo: "CAMISETA ALGODÓN PREMIUM",
+                precio: "$90.000 COP",
+                imagen: "urbano/urbana6.jpeg",
+                badge: "EXCLUSIVO",
+                    material: "260 Gramos 11% Poliéster 85% Algodón 4% expandex",
+                gama: "Algodón Premium",
+                categoria: "camisetas",
+                colores: coloresAlgodonPremium,
+                tallas: tallasS_XL
+            },   {
+                titulo: "CAMISETA ALGODÓN PREMIUM",
+                precio: "$90.000 COP",
+                imagen: "urbano/urbana10.jpeg",
+                badge: "DISPONIBLE",
+                    material: "260 Gramos 11% Poliéster 85% Algodón 4% expandex",
+                gama: "Algodón Premium",
+                categoria: "camisetas",
+                colores: coloresAlgodonPremium,
+                tallas: tallasS_XL
+            },   {
+                titulo: "CAMISETA ALGODÓN PREMIUM",
+                precio: "$90.000 COP",
+                imagen: "urbano/urbana12.jpeg",
+                badge: "MAS VENDIDOS",
+                  material: "260 Gramos 11% Poliéster 85% Algodón 4% expandex",
+                gama: "Algodón Premium",
+                categoria: "camisetas",
+                colores: coloresAlgodonPremium,
+                tallas: tallasS_XL
+            },   
+             {
+                titulo:  "CAMISETA ALGODÓN PREMIUM",
+                precio: "$90.000 COP",
+                imagen: "urbano/urbana13.jpeg",
+                badge: "EXCLUSIVO",
+                material: "260 Gramos 11% Poliéster 85% Algodón 4% expandex",
+                gama: "Algodón Premium",
+                categoria: "camisetas",
+                colores: coloresAlgodonPremium,
+                tallas: tallasS_XL
+            },
+            
+             {
+                titulo: "CAMISETA TELA FRÍA PREMIUM",
+                precio: "$90.000 COP",
+                imagen: "urbano/urbana7.jpeg",
+                badge: "EXCLUSIVO",
+                material: "260 Gramos 5% Poliéster 90% Algodón 5% expandex",
+                gama: "Tela Fría Premium",
+                categoria: "camisetas",
+                colores: coloresTelaFriaPremium,
+                tallas: tallasS_2XL
+            },
+            {
+                titulo: "CAMISETA TELA FRÍA PREMIUM",
+                precio: "$90.000 COP",
+                imagen: "urbano/urbana8.jpeg",
+                badge: "EXCLUSIVO",
+                material: "260 Gramos 5% Poliéster 90% Algodón 5% expandex",
+                gama: "Tela Fría Premium",
+                categoria: "camisetas",
+                colores: coloresTelaFriaPremium,
+                tallas: tallasS_2XL
+            },
+             {
+                titulo: "CAMISETA TELA FRÍA PREMIUM",
+                precio: "$90.000 COP",
+                imagen: "urbano/urbana9.jpeg",
+                badge: "EXCLUSIVO",
+                material: "260 Gramos 5% Poliéster 90% Algodón 5% expandex",
+                gama: "Tela Fría Premium",
+                categoria: "camisetas",
+                colores: coloresTelaFriaPremium,
+                tallas: tallasS_2XL
+            },
+             {
+                titulo: "CAMISETA TELA FRÍA PREMIUM",
+                precio: "$90.000 COP",
+                imagen: "urbano/urbana11.jpeg",
+                badge: "EXCLUSIVO",
+                material: "260 Gramos 5% Poliéster 90% Algodón 5% expandex",
+                gama: "Tela Fría Premium",
+                categoria: "camisetas",
+                colores: coloresTelaFriaPremium,
+                tallas: tallasS_2XL
+            },
+            {
+                titulo: "CAMISETA TELA FRÍA PREMIUM",
+                precio: "$90.000 COP",
+                imagen: "urbano/urbana14.jpeg",
+                badge: "EXCLUSIVO",
+                material: "260 Gramos 5% Poliéster 90% Algodón 5% expandex",
+                gama: "Tela Fría Premium",
+                categoria: "camisetas",
+                colores: coloresTelaFriaPremium,
+                tallas: tallasS_2XL
+            },
+           
+               
+             {
+                titulo: "CAMISETA TELA FRÍA PREMIUM",
+                precio: "$90.000 COP",
+                imagen: "urbano/urbana.jpeg",
+                badge: "EXCLUSIVO",
+                material: "260 Gramos 5% Poliéster 90% Algodón 5% expandex",
+                gama: "Tela Fría Premium",
+                categoria: "camisetas",
+                colores: coloresTelaFriaPremium,
+                tallas: tallasS_2XL
+            },
+            {
+                titulo: "BASICA ALGODÓN",
+                precio: "$45.000 COP",
+                imagen: "urbano/urbana2.jpeg",
+                badge: "MÁS VENDIDO",
+                material: "Algodón 160 gramos",
+                gama: "Algodón Básico",
+                categoria: "camisetas",
+                colores: coloresAlgodonBasico,
+                tallas: tallasXS_XL
+            },
+            {
+                titulo: "BUZO OVERSIZE STREET",
+                precio: "$110.000 COP",
+                imagen: "#",
+                badge: "DESTACADO",
+                material: "240 Gramos 50% Algodón 50% Poliéster",
+                gama: "Buzos",
+                categoria: "buzos",
+                colores: coloresBuzos,
+                tallas: tallasS_XL
+            },
+          
+            {
+                titulo: "SACO CON CAPOTA HOODIE",
+                precio: "$130.000 COP",
+                imagen: "#",
+                badge: "NUEVO",
+                material: "Algodón Perchado",
+                gama: "Sacos con Capota",
+                categoria: "sacos",
+                colores: coloresSacos,
+                tallas: tallasS_2XL
+            },
+ 
+        ];
+
+        // FUNCIÓN PARA PINTAR LOS PRODUCTOS EN LA PANTALLA (Corregido a 'contenedor-urbana')
+        function mostrarProductos(lista) {
+            const contenedor = document.getElementById('contenedor-urbana');
+            contenedor.innerHTML = "";
+            document.getElementById('contador-productos').innerText = `${lista.length} Productos disponibles`;
+
+            lista.forEach(prod => {
+                contenedor.innerHTML += `
+                <div class="producto-card-flip">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <span class="badge-tag">${prod.badge}</span>
+                            <img src="${prod.imagen}" alt="${prod.titulo}">
+                            <div class="info-basica">
+                                <h3>${prod.titulo}</h3>
+                                <p class="precio-frente">${prod.precio}</p>
+                                <span class="pista-hover">💡 Pasa el mouse para ver detalles</span>
+                            </div>
+                        </div>
+                        <div class="card-back">
+                            <img src="${prod.imagen}" alt="${prod.titulo}" class="card-back-img">
+                            <div class="card-back-content">
+                                <div>
+                                    <h3>${prod.titulo}</h3>
+                                    <p class="precio-back">${prod.precio}</p>
+                                    <div class="detalles-prenda">
+                                        <p><strong>Material:</strong> ${prod.material}</p>
+                                        <p><strong>Gama:</strong> ${prod.gama}</p>
+                                        <div class="colores-box">
+                                            <strong>Colores disponibles:</strong>
+                                            <div class="colores-list">
+                                                ${prod.colores}
+                                            </div>
+                                        </div>
+                                        <div class="tallas-box">
+                                            <strong>Tallas:</strong>
+                                            <div class="tallas-list">
+                                                ${prod.tallas}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a href="https://wa.me/573226158846?text=¡Hola!%20Quiero%20pedir%20el/la%20*${encodeURIComponent(prod.titulo)}*%20(${encodeURIComponent(prod.precio)})." target="_blank" class="btn-wsp-pedir">
+                                    PEDIR VÍA WHATSAPP
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            });
+        }
+
+        // FUNCIÓN PARA FILTRAR AL HACER CLIC EN LOS BOTONES
+        function filtrarProductos(categoria, boton) {
+            document.querySelectorAll('.btn-filtro').forEach(btn => btn.classList.remove('activo'));
+            if(boton) boton.classList.add('activo');
+
+            if (categoria === 'todos') {
+                mostrarProductos(productosUrbana);
+            } else {
+                const filtrados = productosUrbana.filter(p => p.categoria === categoria);
+                mostrarProductos(filtrados);
+            }
+        }
+
+        // Cargar todos por defecto al abrir la página
+        mostrarProductos(productosUrbana);
+    </script>
+</body>
+</html>
