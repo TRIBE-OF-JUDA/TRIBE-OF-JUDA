@@ -17,15 +17,17 @@
 
 html {
     scroll-behavior: smooth;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
 }
 
 
 body {
     font-family: 'Montserrat', sans-serif;
-
     background: #ffffff;
-
     color: #0a0a0a;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
 }
 
 
@@ -1549,7 +1551,7 @@ button {
 
 
 /* ==============================
-   TABLET Y MÓVIL
+   TABLET Y MÓVIL (CORREGIDO PARA EVITAR DESBORDES)
 ============================== */
 
 @media (max-width: 1100px) {
@@ -1562,9 +1564,30 @@ button {
 }
 
 @media (max-width: 700px) {
-    .navbar { height: 70px; }
-    .brand img { width: 110px; }
+    html, body {
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+    }
+    .navbar { height: 70px; width: 100% !important; }
+    .nav-container { padding: 0 10px !important; }
+    .brand { width: 75px; height: 75px; }
+    .brand img { width: 70px; height: 70px; }
     .nav-menu { display: none; }
+    
+    /* Ajuste clave para el botón de WhatsApp móvil sin que se corte */
+    .whatsapp-modern {
+        padding: 6px 10px;
+        font-size: 7px;
+    }
+    .whatsapp-circle {
+        width: 24px;
+        height: 24px;
+    }
+    .whatsapp-circle svg {
+        width: 14px;
+        height: 14px;
+    }
+
     .hero { min-height: 650px; }
     .hero h1 { font-size: 75px; }
     .section { padding: 85px 0; }
