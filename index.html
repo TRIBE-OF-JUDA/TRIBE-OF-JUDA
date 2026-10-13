@@ -228,5 +228,25 @@
         }
     });
 </script>
+<script>
+    document.addEventListener('click', (e) => {
+        const btnToggle = e.target.closest('#btnMenuToggle') || e.target.closest('.menu-hamburguesa');
+        const navMenu = document.querySelector('.nav-menu');
+
+        // Si se hace clic en el botón de las 3 rayas
+        if (btnToggle && navMenu) {
+            btnToggle.classList.toggle('activo');
+            navMenu.classList.toggle('activo');
+            return;
+        }
+
+        // Si se hace clic en cualquier enlace dentro del menú desplegable, se cierra automáticamente
+        if (e.target.closest('.nav-menu a') && navMenu) {
+            const btn = document.querySelector('.menu-hamburguesa') || document.getElementById('btnMenuToggle');
+            if (btn) btn.classList.remove('activo');
+            navMenu.classList.remove('activo');
+        }
+    });
+</script>
 </body>
 </html>
